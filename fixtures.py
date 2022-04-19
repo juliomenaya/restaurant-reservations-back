@@ -59,3 +59,12 @@ def initial_load():
         # second guest bought 1 coupon1 and 1 coupon2
         create_coupon_purchase(coupon1, guest2)
         create_coupon_purchase(coupon2, guest2)
+
+        owner2 = create_owner('miguel.rubi', 'Miguel', 'Rubi',
+                'miguel.rubi@gmail.com', '12345678')
+
+        for i in range(1, 6):
+            create_restaurant(owner2, f'{owner2.user.first_name} number-{i}')
+        
+        for i, restaurant in enumerate(owner2.restaurants.all(), 1):
+            create_coupon(restaurant, f'Coupon {i}', 20)
