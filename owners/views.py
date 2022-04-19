@@ -21,6 +21,6 @@ def login(request):
         return Response(status=HTTP_401_UNAUTHORIZED)
 
     if user.check_password(login_serializer.validated_data['password']):
-        return Response({'data': {'token': user.auth_token.key}})
+        return Response({'data': {'token': user.auth_token.key, 'owner_id': user.owner.id}})
     else:
         return Response(status=HTTP_401_UNAUTHORIZED)
