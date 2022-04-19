@@ -12,15 +12,14 @@ def login(request):
     login_serializer.is_valid(raise_exception=True)
 
     try:
-        user = User.objects.get(username=login_serializer.validated_data.get('username'))
-    except User.DoesNotExist:
-        pass
-    try:
-        user = User.objects.get(email=login_serializer.validated_data.get('email'))
+        if username := login_serializer.validated_data.get('username'):
+            user = User.objects.get(username=username)
+        else:
+            user = User.objects.get(email=login_serializer.validated_data.get('email'))
     except User.DoesNotExist:
         return Response(status=HTTP_401_UNAUTHORIZED)
 
     if user.check_password(login_serializer.validated_data['password']):
-        return Response({'data': {'token': user.auth_token.key, 'owner_id': user.owner.id}})
+        return Response({'token': user.auth_token.key, 'owner_id': user.owner.id})
     else:
         return Response(status=HTTP_401_UNAUTHORIZED)
