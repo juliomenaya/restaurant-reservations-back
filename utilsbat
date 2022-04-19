@@ -1,0 +1,1 @@
+dir -Path **/migrations/ -Filter *initial.py  -Recurse | Remove-Item
