@@ -20,9 +20,12 @@ def login(request):
         try:
             return User.objects.get(email=username)
         except User.DoesNotExist:
-            return Response(status=HTTP_401_UNAUTHORIZED)
+            pass
     
     user = get_user()
+
+    if not user:
+        return Response(status=HTTP_401_UNAUTHORIZED)
 
     if user.check_password(login_serializer.validated_data['password']):
         return Response({'token': user.auth_token.key, 'owner_id': user.owner.id})
