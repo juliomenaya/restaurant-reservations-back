@@ -10,14 +10,19 @@ from owners.serializers import OwnerLoginSerializer
 def login(request):
     login_serializer = OwnerLoginSerializer(data=request.data)
     login_serializer.is_valid(raise_exception=True)
-
-    try:
-        if username := login_serializer.validated_data.get('username'):
-            user = User.objects.get(username=username)
-        else:
-            user = User.objects.get(email=login_serializer.validated_data.get('email'))
-    except User.DoesNotExist:
-        return Response(status=HTTP_401_UNAUTHORIZED)
+    username = login_serializer.validated_data['username']
+    
+    def get_user():
+        try:
+            return User.objects.get(username=username)
+        except User.DoesNotExist:
+            pass
+        try:
+            return User.objects.get(email=username)
+        except User.DoesNotExist:
+            return Response(status=HTTP_401_UNAUTHORIZED)
+    
+    user = get_user()
 
     if user.check_password(login_serializer.validated_data['password']):
         return Response({'token': user.auth_token.key, 'owner_id': user.owner.id})
